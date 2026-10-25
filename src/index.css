@@ -1,0 +1,144 @@
+
+@import "tailwindcss";
+
+
+/* Hide scrollbar throughout the website */
+html,
+body,
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
+/* Optional: Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+
+
+@font-face {
+  font-family: "Shamgod";
+  src: url("/fontspring-demo-shamgod-bold.otf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Nura";
+  src: url("/nura-bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Roxhead";
+  src: url("/Roxhead-Demo.otf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Colastra-bold";
+  src: url("/ColastaBold-p7pRR.otf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Satoshi-Regular";
+  src: url("/Satoshi-Regular.otf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Satoshi-Black";
+  src: url("/Satoshi-Black.otf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Satoshi-Bold";
+  src: url("/Satoshi-Bold.otf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Satoshi-Medium";
+  src: url("/Satoshi-Medium.otf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Satoshi-light";
+  src: url("/Satoshi-Medium.otf") format("truetype");
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Domnique-regular";
+  src: url("/Dominique-Regular.otf") format("truetype");
+  font-weight: 700;
+  font-style:normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "CSRude";
+  src: url("/CSRude-Regular_demo.otf") format("truetype");
+  font-weight: 200;
+  font-style:normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Megra";
+  src: url("/megra.otf") format("truetype");
+  font-weight: 500;
+  font-style:normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Kaigo";
+  src: url("/Kaigo.otf") format("truetype");
+  font-weight: 500;
+  font-style:normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Nortune";
+  src: url("/Nortune.ttf") format("truetype");
+  font-weight: 500;
+  font-style:normal;
+  font-display: swap;
+}
+
+
+@theme {
+  --font-shamgod: "Shamgod", sans-serif;
+  --font-roxhead: "Roxhead", sans-serif;
+  --font-nura: "Nura", sans-serif;
+  --font-csrude: "CSRude", sans-serif;
+  --font-megra: "Megra", sans-serif;
+  --font-kaigo: "Kaigo", sans-serif;
+  --font-nortune: "Nortune", sans-serif;
+
+
+  --font-heading: "Colastra-bold", sans-serif;
+  --font-satoshireg: "Satoshi-Regular", sans-serif;
+  --font-satoshimed: "Satoshi-Medium", sans-serif;
+  --font-satoshibold: "Satoshi-Bold", sans-serif;
+  --font-satoshiblack: "Satoshi-Black", sans-serif;
+  --font-satoshilight: "Satoshi-light", sans-serif;
+  --font-domnique: "Domnique-regular", sans-serif;
+  
+  
+}
+
