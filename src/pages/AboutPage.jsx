@@ -261,7 +261,7 @@ export default function AboutPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="anim-intro relative aspect-[4/3] bg-neutral-900 rounded-sm overflow-hidden group">
             <img
-              src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1000&q=80"
+              src="https://i.pinimg.com/736x/8c/0a/4a/8c0a4a903e25c0d48705d4e47b32d1ea.jpg"
               alt="Nihal Uikey Workspace"
               className="w-full h-full object-cover grayscale contrast-125 group-hover:scale-105 transition-transform duration-700 ease-out"
             />

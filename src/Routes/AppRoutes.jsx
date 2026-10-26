@@ -4,6 +4,7 @@ import PageWrapper from "../components/PageWrapper";
 import ProjectsSection from "../pages/ProjectsSection";
 import AboutPage from "../pages/AboutPage";
 import ScrollToTop from "../components/ScrollToTop";
+import NotFound from "../pages/NotFound";
 
 const AppRoutes = () => {
   return (
@@ -13,6 +14,7 @@ const AppRoutes = () => {
       <Route path="/" element={<PageWrapper />} />
       <Route path="/projects" element={<ProjectsSection />} />
       <Route path="/about" element={<AboutPage />} />
+      <Route path="/*" element={<NotFound/>} />
     </Routes>
     </>
   );
