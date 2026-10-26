@@ -1,11 +1,83 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
-
 
 export default function ContactModal({ isOpen, onClose }) {
   const modalRef = useRef(null);
   const containerRef = useRef(null);
   const formRef = useRef(null);
+
+  // Form State Management
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    company: "",
+    subject: "",
+    message: "",
+  });
+
+  const [status, setStatus] = useState({
+    loading: false,
+    success: false,
+    error: "",
+  });
+
+  // Handle Input Changes
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // Handle Form Submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setStatus({ loading: true, success: false, error: "" });
+
+    try {
+      const response = await fetch(`https://myportfolio-backend-h7lk.onrender.com/api/contact`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+ 
+      
+
+      if (!response.ok) {
+        
+        throw new Error(data.message || "Something went wrong!");
+      }
+
+      setStatus({
+        loading: false,
+        success: true,
+        error: "",
+      });
+
+      // Clear form on success
+      setFormData({
+        name: "",
+        email: "",
+        company: "",
+        subject: "",
+        message: "",
+      });
+
+      // Optional: Close modal automatically after 2 seconds on success
+      setTimeout(() => {
+        onClose();
+        setStatus((prev) => ({ ...prev, success: false }));
+      }, 2500);
+
+    } catch (err) {
+      setStatus({
+        loading: false,
+        success: false,
+        error: err.message || "Failed to send message. Please try again.",
+      });
+    }
+  };
 
   // GSAP Entrance (Unfold) & Exit Animation
   useEffect(() => {
@@ -54,7 +126,7 @@ export default function ContactModal({ isOpen, onClose }) {
     }
   }, [isOpen]);
 
-  // 3D Cursor Tilt Detail (Mouse move par right/left tilt)
+  // 3D Cursor Tilt Detail
   const handleMouseMove = (e) => {
     if (!modalRef.current) return;
 
@@ -93,13 +165,13 @@ export default function ContactModal({ isOpen, onClose }) {
   return (
     <div
       ref={containerRef}
-      className="fixed  inset-0 z-50 flex items-center justify-center p-4 pointer-events-none cusrpr"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
     >
       <div
         ref={modalRef}
         onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseMove}
-        className="pointer-events-auto  relative w-full max-w-2xl bg-[#989886d8] text-black p-8 sm:p-12 shadow-2xl overflow-hidden font-sans select-none will-change-transform"
+        onMouseLeave={handleMouseLeave}
+        className="pointer-events-auto relative w-full max-w-2xl bg-[#989886d8] text-black p-8 sm:p-12 shadow-2xl overflow-hidden font-sans select-none will-change-transform"
         style={{
           boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.4)",
         }}
@@ -117,38 +189,56 @@ export default function ContactModal({ isOpen, onClose }) {
             className="relative group inline-flex flex-col items-end text-xs font-heading tracking-widest uppercase text-white cursor-pointer py-1"
           >
             <span>CLOSE</span>
-            {/* Animated underline effect on hover */}
             <span className="absolute bottom-0 left-0 w-full h-[2px] bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
           </button>
         </div>
 
+        {/* FEEDBACK MESSAGES */}
+        {status.success && (
+          <div className="mb-6 p-4 bg-black text-[#D9F95F] text-xs font-heading uppercase tracking-widest text-center">
+            ✓ Message sent successfully! I will get back to you soon.
+          </div>
+        )}
+        {status.error && (
+          <div className="mb-6 p-4 bg-red-900/80 text-white text-xs font-mono uppercase tracking-widest text-center">
+            ✕ {status.error}
+          </div>
+        )}
+
         {/* FORM CONTENT */}
         <form
           ref={formRef}
-          onSubmit={(e) => e.preventDefault()}
+          onSubmit={handleSubmit}
           className="space-y-6"
         >
           {/* INPUT ROW 1 */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
             <div className="flex flex-col space-y-1">
               <label className="text-md font-extrabold font-heading tracking-wide text-white">
-                YOUR NAME
+                YOUR NAME *
               </label>
               <input
-              
                 type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                required
                 placeholder="Name"
                 className="bg-transparent border-b border-white/30 py-2 text-2xl text-white/80 focus:outline-none focus:border-white placeholder-white/40 font-normal"
               />
             </div>
             <div className="flex flex-col space-y-1">
               <label className="text-md font-extrabold font-heading tracking-wide text-white">
-                YOUR EMAIL
+                YOUR EMAIL *
               </label>
               <input
                 type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
                 placeholder="Email address"
-                className="bg-transparent border-b border-white/30 py-2 text-2xl text-white/80  focus:outline-none focus:border-white placeholder-white/40 font-normal"
+                className="bg-transparent border-b border-white/30 py-2 text-2xl text-white/80 focus:outline-none focus:border-white placeholder-white/40 font-normal"
               />
             </div>
           </div>
@@ -161,18 +251,25 @@ export default function ContactModal({ isOpen, onClose }) {
               </label>
               <input
                 type="text"
+                name="company"
+                value={formData.company}
+                onChange={handleChange}
                 placeholder="Company name"
-                className="bg-transparent border-b border-white/30 py-2 text-2xl text-white/80  focus:outline-none focus:border-white placeholder-white/40 font-normal"
+                className="bg-transparent border-b border-white/30 py-2 text-2xl text-white/80 focus:outline-none focus:border-white placeholder-white/40 font-normal"
               />
             </div>
             <div className="flex flex-col space-y-1">
               <label className="text-md font-extrabold font-heading tracking-wide text-white">
-                PROJECT TYPE
+                SUBJECT *
               </label>
               <input
                 type="text"
-                placeholder="Identity, motion, logo.."
-                className="bg-transparent border-b border-white/30 py-2 text-2xl text-white/80  focus:outline-none focus:border-white placeholder-white/40 font-normal"
+                name="subject"
+                value={formData.subject}
+                onChange={handleChange}
+                required
+                placeholder="Project inquiry, collaboration.."
+                className="bg-transparent border-b border-white/30 py-2 text-2xl text-white/80 focus:outline-none focus:border-white placeholder-white/40 font-normal"
               />
             </div>
           </div>
@@ -180,9 +277,13 @@ export default function ContactModal({ isOpen, onClose }) {
           {/* TEXTAREA ROW */}
           <div className="flex flex-col space-y-1">
             <label className="text-md font-extrabold font-heading tracking-wide text-white">
-              TELL ME ABOUT THE PROJECT
+              TELL ME ABOUT THE PROJECT *
             </label>
             <textarea
+              name="message"
+              value={formData.message}
+              onChange={handleChange}
+              required
               rows={3}
               placeholder="Project details, timing and budget.."
               className="bg-transparent border-b border-white/30 py-2 text-xl text-white focus:outline-none focus:border-white placeholder-white/40 font-normal resize-none"
@@ -192,14 +293,14 @@ export default function ContactModal({ isOpen, onClose }) {
           {/* FOOTER & SUBMIT BUTTON */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pt-4 gap-6">
             <div className="flex gap-4 text-[10px] font-nuro text-black/80 tracking-widest font-bold">
-              <a href="#" className="hover:text-black/30">
+              <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="hover:text-black/30">
                 LINKEDIN
               </a>
-              <a href="#" className="hover:text-black/30">
+              <a href="https://instagram.com" target="_blank" rel="noreferrer" className="hover:text-black/30">
                 INSTAGRAM
               </a>
               <a
-                href="mailto:rustam-98@hotmail.com"
+                href="mailto:nihaluikey6488@gmail.com"
                 className="hover:text-black/30 uppercase"
               >
                 nihaluikey6488@gmail.com
@@ -208,9 +309,10 @@ export default function ContactModal({ isOpen, onClose }) {
 
             <button
               type="submit"
-              className="px-8 py-4 bg-black text-white text-xs font-mono uppercase tracking-widest hover:bg-neutral-800 transition-colors cursor-pointer font-nura"
+              disabled={status.loading}
+              className="px-8 py-4 bg-black text-white text-xs font-mono uppercase tracking-widest hover:bg-neutral-800 transition-colors cursor-pointer font-nura disabled:opacity-50"
             >
-              SUBMIT INQUIRY
+              {status.loading ? "SENDING..." : "SUBMIT INQUIRY"}
             </button>
           </div>
         </form>

@@ -1,17 +1,19 @@
 'use client'
 
-import React, { useState } from 'react';
+
+import { useState } from 'react';
 import Preloader from './Preloader'; // Aapke preloader ka path
 import HeroSection from './Hero3DModel';
 import UrbanSection from './UrbanSection';
 import Navbar from './Navbar';
+import SmoothScroll from './SmoothScroll';
 
 export default function PageWrapper() {
-  const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
 
   return (
     <div className="relative w-full bg-[#cecece] overflow-x-hidden">
-      
+      {/* <SmoothScroll/> */}
       {/* Preloader - Yeh top par fixed rahega aur animation complete hone par upar slide ho jayega */}
       {isLoading && (
         <Preloader onComplete={() => setIsLoading(false)} />

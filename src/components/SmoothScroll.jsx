@@ -16,7 +16,7 @@ const SmoothScroll = () => {
     });
 
     // Sync Lenis scrolling with GSAP ScrollTrigger
-    lenis.on("scroll", ScrollTrigger.update);
+    lenis.on("scroll", ScrollTrigger.update); 
 
     // Use GSAP's ticker to drive Lenis
     const updateScroll = (time) => {
