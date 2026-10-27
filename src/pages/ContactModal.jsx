@@ -130,7 +130,7 @@ export default function ContactModal({ isOpen, onClose }) {
             SEND A MESSAGE
           </h2>
           <button
-            type="button"
+            type="button" 
             onClick={onClose}
             className="relative group inline-flex flex-col items-end text-xs font-heading tracking-widest uppercase text-white cursor-pointer py-1"
           >
@@ -174,7 +174,7 @@ export default function ContactModal({ isOpen, onClose }) {
                   required
                   maxLength={100}
                   placeholder="Name"
-                  className="bg-transparent border-b border-white/30 py-2 text-2xl text-white/80 focus:outline-none focus:border-white placeholder-white/40 font-normal"
+                  className="bg-transparent border-b border-white/30 py-2 text-[20px] text-white focus:outline-none focus:border-white placeholder-white/40 font-normal font-domnique tracking-widest"
                 />
               </div>
               <div className="flex flex-col space-y-1">
@@ -187,7 +187,7 @@ export default function ContactModal({ isOpen, onClose }) {
                   required
                   maxLength={254}
                   placeholder="Email address"
-                  className="bg-transparent border-b border-white/30 py-2 text-2xl text-white/80 focus:outline-none focus:border-white placeholder-white/40 font-normal"
+                  className="bg-transparent border-b border-white/30 py-2 text-[20px] text-white focus:outline-none focus:border-white placeholder-white/40 font-normal font-domnique tracking-widest"
                 />
               </div>
             </div>
@@ -203,7 +203,7 @@ export default function ContactModal({ isOpen, onClose }) {
                   name="company"
                   maxLength={100}
                   placeholder="Company name"
-                  className="bg-transparent border-b border-white/30 py-2 text-2xl text-white/80 focus:outline-none focus:border-white placeholder-white/40 font-normal"
+                  className="bg-transparent border-b border-white/30 py-2 text-[20px] text-white focus:outline-none focus:border-white placeholder-white/40 font-normal font-domnique tracking-widest"
                 />
               </div>
               <div className="flex flex-col space-y-1">
@@ -216,7 +216,7 @@ export default function ContactModal({ isOpen, onClose }) {
                   required
                   maxLength={150}
                   placeholder="Project inquiry, collaboration.."
-                  className="bg-transparent border-b border-white/30 py-2 text-2xl text-white/80 focus:outline-none focus:border-white placeholder-white/40 font-normal"
+                  className="bg-transparent border-b border-white/30 py-2 text-[20px] text-white focus:outline-none focus:border-white placeholder-white/40 font-normal font-domnique tracking-widest"
                 />
               </div>
             </div>
@@ -232,7 +232,7 @@ export default function ContactModal({ isOpen, onClose }) {
                 maxLength={5000}
                 rows={3}
                 placeholder="Project details, timing and budget.."
-                className="bg-transparent border-b border-white/30 py-2 text-xl text-white focus:outline-none focus:border-white placeholder-white/40 font-normal resize-none"
+                className="bg-transparent border-b border-white/30 py-2 text-[20px] text-white focus:outline-none focus:border-white placeholder-white/40 font-normal font-domnique tracking-widest"
               />
             </div>
 
