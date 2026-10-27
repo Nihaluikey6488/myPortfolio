@@ -1,83 +1,24 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
+import { useForm } from "@formspree/react";
 import { gsap } from "gsap";
 
 export default function ContactModal({ isOpen, onClose }) {
+  // Replace "YOUR_FORM_ID" with your actual Formspree form ID (e.g., "xbjnwxyz")
+  const [state, handleSubmit] = useForm("xeaaabkv");
+
   const modalRef = useRef(null);
   const containerRef = useRef(null);
   const formRef = useRef(null);
 
-  // Form State Management
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    company: "",
-    subject: "",
-    message: "",
-  });
-
-  const [status, setStatus] = useState({
-    loading: false,
-    success: false,
-    error: "",
-  });
-
-  // Handle Input Changes
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  // Handle Form Submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setStatus({ loading: true, success: false, error: "" });
-
-    try {
-      const response = await fetch(`https://myportfolio-backend-h7lk.onrender.com/api/contact`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
- 
-      
-
-      if (!response.ok) {
-        
-        throw new Error(data.message || "Something went wrong!");
-      }
-
-      setStatus({
-        loading: false,
-        success: true,
-        error: "",
-      });
-
-      // Clear form on success
-      setFormData({
-        name: "",
-        email: "",
-        company: "",
-        subject: "",
-        message: "",
-      });
-
-      // Optional: Close modal automatically after 2 seconds on success
-      setTimeout(() => {
+  // Auto-close modal after successful Formspree submission
+  useEffect(() => {
+    if (state.succeeded) {
+      const timer = setTimeout(() => {
         onClose();
-        setStatus((prev) => ({ ...prev, success: false }));
-      }, 2500);
-
-    } catch (err) {
-      setStatus({
-        loading: false,
-        success: false,
-        error: err.message || "Failed to send message. Please try again.",
-      });
+      }, 3000);
+      return () => clearTimeout(timer);
     }
-  };
+  }, [state.succeeded, onClose]);
 
   // GSAP Entrance (Unfold) & Exit Animation
   useEffect(() => {
@@ -105,12 +46,16 @@ export default function ContactModal({ isOpen, onClose }) {
         skewX: 0,
         duration: 0.7,
         ease: "power4.out",
-      }).fromTo(
-        formRef.current.children,
-        { opacity: 0, y: 15 },
-        { opacity: 1, y: 0, duration: 0.4, stagger: 0.05, ease: "power2.out" },
-        "-=0.3",
-      );
+      });
+
+      if (formRef.current?.children) {
+        tl.fromTo(
+          formRef.current.children,
+          { opacity: 0, y: 15 },
+          { opacity: 1, y: 0, duration: 0.4, stagger: 0.05, ease: "power2.out" },
+          "-=0.3"
+        );
+      }
     } else {
       gsap.to(modalRef.current, {
         opacity: 0,
@@ -185,6 +130,7 @@ export default function ContactModal({ isOpen, onClose }) {
             SEND A MESSAGE
           </h2>
           <button
+            type="button"
             onClick={onClose}
             className="relative group inline-flex flex-col items-end text-xs font-heading tracking-widest uppercase text-white cursor-pointer py-1"
           >
@@ -193,129 +139,130 @@ export default function ContactModal({ isOpen, onClose }) {
           </button>
         </div>
 
-        {/* FEEDBACK MESSAGES */}
-        {status.success && (
-          <div className="mb-6 p-4 bg-black text-[#D9F95F] text-xs font-heading uppercase tracking-widest text-center">
-            ✓ Message sent successfully! I will get back to you soon.
+        {/* FORMSPEE SUCCESS STATE */}
+        {state.succeeded ? (
+          <div className="mb-6 p-6 bg-black text-[#D9F95F] text-xs font-heading uppercase tracking-widest text-center space-y-3">
+            <p className="text-base font-bold">✓ Message sent successfully!</p>
+            <p className="text-white/70 normal-case font-mono">
+              Thanks for reaching out! I will get back to you soon.
+            </p>
           </div>
-        )}
-        {status.error && (
-          <div className="mb-6 p-4 bg-red-900/80 text-white text-xs font-mono uppercase tracking-widest text-center">
-            ✕ {status.error}
-          </div>
-        )}
+        ) : (
+          /* FORM CONTENT */
+          <form
+         
+            ref={formRef}
+            onSubmit={handleSubmit}
+            className="space-y-6"
+          >
+            {/* FORMSPREE ERROR ALERT */}
+            {state.errors && Array.isArray(state.errors) && state.errors.length > 0 && (
+              <div className="mb-6 p-4 bg-red-900/80 text-white text-xs font-mono uppercase tracking-widest text-center">
+                ✕ Something went wrong. Please check your inputs and try again.
+              </div>
+            )}
 
-        {/* FORM CONTENT */}
-        <form
-          ref={formRef}
-          onSubmit={handleSubmit}
-          className="space-y-6"
-        >
-          {/* INPUT ROW 1 */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+            {/* INPUT ROW 1 */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+              <div className="flex flex-col space-y-1">
+                <label className="text-md font-extrabold font-heading tracking-wide text-white">
+                  YOUR NAME *
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  required
+                  maxLength={100}
+                  placeholder="Name"
+                  className="bg-transparent border-b border-white/30 py-2 text-2xl text-white/80 focus:outline-none focus:border-white placeholder-white/40 font-normal"
+                />
+              </div>
+              <div className="flex flex-col space-y-1">
+                <label className="text-md font-extrabold font-heading tracking-wide text-white">
+                  YOUR EMAIL *
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  required
+                  maxLength={254}
+                  placeholder="Email address"
+                  className="bg-transparent border-b border-white/30 py-2 text-2xl text-white/80 focus:outline-none focus:border-white placeholder-white/40 font-normal"
+                />
+              </div>
+            </div>
+
+            {/* INPUT ROW 2 */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+              <div className="flex flex-col space-y-1">
+                <label className="text-md font-extrabold font-heading tracking-wide text-white">
+                  COMPANY / OPTIONAL
+                </label>
+                <input
+                  type="text"
+                  name="company"
+                  maxLength={100}
+                  placeholder="Company name"
+                  className="bg-transparent border-b border-white/30 py-2 text-2xl text-white/80 focus:outline-none focus:border-white placeholder-white/40 font-normal"
+                />
+              </div>
+              <div className="flex flex-col space-y-1">
+                <label className="text-md font-extrabold font-heading tracking-wide text-white">
+                  SUBJECT *
+                </label>
+                <input
+                  type="text"
+                  name="subject"
+                  required
+                  maxLength={150}
+                  placeholder="Project inquiry, collaboration.."
+                  className="bg-transparent border-b border-white/30 py-2 text-2xl text-white/80 focus:outline-none focus:border-white placeholder-white/40 font-normal"
+                />
+              </div>
+            </div>
+
+            {/* TEXTAREA ROW */}
             <div className="flex flex-col space-y-1">
               <label className="text-md font-extrabold font-heading tracking-wide text-white">
-                YOUR NAME *
+                TELL ME ABOUT THE PROJECT *
               </label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
+              <textarea
+                name="message"
                 required
-                placeholder="Name"
-                className="bg-transparent border-b border-white/30 py-2 text-2xl text-white/80 focus:outline-none focus:border-white placeholder-white/40 font-normal"
+                maxLength={5000}
+                rows={3}
+                placeholder="Project details, timing and budget.."
+                className="bg-transparent border-b border-white/30 py-2 text-xl text-white focus:outline-none focus:border-white placeholder-white/40 font-normal resize-none"
               />
             </div>
-            <div className="flex flex-col space-y-1">
-              <label className="text-md font-extrabold font-heading tracking-wide text-white">
-                YOUR EMAIL *
-              </label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                placeholder="Email address"
-                className="bg-transparent border-b border-white/30 py-2 text-2xl text-white/80 focus:outline-none focus:border-white placeholder-white/40 font-normal"
-              />
-            </div>
-          </div>
 
-          {/* INPUT ROW 2 */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-            <div className="flex flex-col space-y-1">
-              <label className="text-md font-extrabold font-heading tracking-wide text-white">
-                COMPANY / OPTIONAL
-              </label>
-              <input
-                type="text"
-                name="company"
-                value={formData.company}
-                onChange={handleChange}
-                placeholder="Company name"
-                className="bg-transparent border-b border-white/30 py-2 text-2xl text-white/80 focus:outline-none focus:border-white placeholder-white/40 font-normal"
-              />
-            </div>
-            <div className="flex flex-col space-y-1">
-              <label className="text-md font-extrabold font-heading tracking-wide text-white">
-                SUBJECT *
-              </label>
-              <input
-                type="text"
-                name="subject"
-                value={formData.subject}
-                onChange={handleChange}
-                required
-                placeholder="Project inquiry, collaboration.."
-                className="bg-transparent border-b border-white/30 py-2 text-2xl text-white/80 focus:outline-none focus:border-white placeholder-white/40 font-normal"
-              />
-            </div>
-          </div>
+            {/* FOOTER & SUBMIT BUTTON */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pt-4 gap-6">
+              <div className="flex gap-4 text-[10px] font-nuro text-black/80 tracking-widest font-bold">
+                <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="hover:text-black/30">
+                  LINKEDIN
+                </a>
+                <a href="https://instagram.com" target="_blank" rel="noreferrer" className="hover:text-black/30">
+                  INSTAGRAM
+                </a>
+                <a
+                  href="mailto:nihaluikey6488@gmail.com"
+                  className="hover:text-black/30 uppercase"
+                >
+                  nihaluikey6488@gmail.com
+                </a>
+              </div>
 
-          {/* TEXTAREA ROW */}
-          <div className="flex flex-col space-y-1">
-            <label className="text-md font-extrabold font-heading tracking-wide text-white">
-              TELL ME ABOUT THE PROJECT *
-            </label>
-            <textarea
-              name="message"
-              value={formData.message}
-              onChange={handleChange}
-              required
-              rows={3}
-              placeholder="Project details, timing and budget.."
-              className="bg-transparent border-b border-white/30 py-2 text-xl text-white focus:outline-none focus:border-white placeholder-white/40 font-normal resize-none"
-            />
-          </div>
-
-          {/* FOOTER & SUBMIT BUTTON */}
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pt-4 gap-6">
-            <div className="flex gap-4 text-[10px] font-nuro text-black/80 tracking-widest font-bold">
-              <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="hover:text-black/30">
-                LINKEDIN
-              </a>
-              <a href="https://instagram.com" target="_blank" rel="noreferrer" className="hover:text-black/30">
-                INSTAGRAM
-              </a>
-              <a
-                href="mailto:nihaluikey6488@gmail.com"
-                className="hover:text-black/30 uppercase"
+              <button
+                type="submit"
+                disabled={state.submitting}
+                className="px-8 py-4 bg-black text-white text-xs font-mono uppercase tracking-widest hover:bg-neutral-800 transition-colors cursor-pointer font-nura disabled:opacity-50"
               >
-                nihaluikey6488@gmail.com
-              </a>
+                {state.submitting ? "SENDING..." : "SUBMIT INQUIRY"}
+              </button>
             </div>
-
-            <button
-              type="submit"
-              disabled={status.loading}
-              className="px-8 py-4 bg-black text-white text-xs font-mono uppercase tracking-widest hover:bg-neutral-800 transition-colors cursor-pointer font-nura disabled:opacity-50"
-            >
-              {status.loading ? "SENDING..." : "SUBMIT INQUIRY"}
-            </button>
-          </div>
-        </form>
+          </form>
+        )}
       </div>
     </div>
   );
